@@ -604,3 +604,27 @@ body {
         font-size: 14px;
     }
 }
+
+
+
+@-moz-document url-prefix() {
+    #chat-messages div {
+        max-width: 85%; 
+        padding: 6px 8px; 
+        font-size: 13px; 
+        line-height: 1.3;
+    }
+    
+    #chat-input-area {
+        padding: 8px;
+    }
+    
+    #chat-input {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .payment-table a[href*="receipts"] {
+        display: inline-block;
+    }
+}
