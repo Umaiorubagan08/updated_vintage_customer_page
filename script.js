@@ -39,12 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // chat bot manually
+
+    // manually chat bot -- later need to implement SLM model.
+
     function getSudhaReply(input) {
       input = input.toLowerCase();
-
+    
       if (input.includes("hello") || input.includes("hi")) {
-        return "Hello! I'm Sudha. How can I assist you with your property needs today?";
+        return "Hello! I'm Sudha. How can I assist you. Want to enable you with our property in ECR, good technology enabled virtual demonstration?";
       } else if (input.includes("plot") && input.includes("available")) {
         return "Yes, we have residential and commercial plots available. Would you like to know the locations?";
       } else if (input.includes("villa") && input.includes("available")) {
@@ -56,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (input.includes("emi") || input.includes("loan")) {
         return "We provide EMI options and help with bank loan arrangements. Do you want to connect with a consultant?";
       } else if (input.includes("location")) {
-        return "We have properties in Dindigul, Madurai, and Coimbatore. Where are you looking to buy?";
+        return "We have properties in Chennai. Where are you looking to buy?";
       } else if (
         input.includes("approval") ||
         input.includes("dtcp") ||
@@ -73,43 +75,113 @@ document.addEventListener("DOMContentLoaded", () => {
         return "You can contact our agent at +91-9876543210 or we can call you back. Just let me know!";
       } else if (input.includes("booking") || input.includes("advance")) {
         return "Booking starts from just ₹10,000. Would you like us to reserve a plot for you?";
+      
+      
+      } else if (input.includes("velachery")) {
+        return randomFromArray([
+          "Velachery is a prime spot! We have plots and apartments there.",
+          "Yes, we offer residential properties in Velachery. Near malls and IT parks!"
+        ]);
+      } else if (input.includes("annanagar")) {
+        return randomFromArray([
+          "Annanagar has premium villa plots available. Great location with top schools nearby.",
+          "Yes! We deal in select projects around Annanagar. Interested in visiting?"
+        ]);
+      } else if (input.includes("tambaram")) {
+        return randomFromArray([
+          "Tambaram properties are in high demand. We have budget-friendly plots there.",
+          "Yes, Tambaram plots available with DTCP approval. Easy access to GST Road."
+        ]);
+      } else if (input.includes("sholinganallur")) {
+        return randomFromArray([
+          "We have gated community projects in Sholinganallur. Ideal for IT professionals.",
+          "Sholinganallur villas and plots are available. Close to top tech companies."
+        ]);
+      } else if (input.includes("porur")) {
+        return randomFromArray([
+          "Porur area has affordable residential plots. Would you like a site visit?",
+          "Yes, Porur has great connectivity and we have some ready-to-build plots there."
+        ]);
+      } else if (input.includes("mambakkam")) {
+        return randomFromArray([
+          "We have new projects launching in Mambakkam. Calm environment, good investment!",
+          "Yes, plots in Mambakkam are available with water and EB facilities."
+        ]);
+      } else if (input.includes("medavakkam")) {
+        return randomFromArray([
+          "Medavakkam is growing fast! We offer plots and flats there.",
+          "Yes, DTCP-approved properties available in Medavakkam. Near IT corridor!"
+        ]);
+      } else if (input.includes("siruseri")) {
+        return randomFromArray([
+          "Siruseri has tech park proximity and great investment plots. Interested?",
+          "Yes, we have plots in Siruseri—ideal for working professionals in OMR."
+        ]);
+      }else if (input.includes("ecr")) {
+        return randomFromArray([
+          "ECR offers a peaceful environment with scenic views. We have residential properties available here.",
+          "Yes, properties on ECR are great for long-term investment. Would you like to explore options?"
+        ]);
+      } else if (input.includes("omr")) {
+        return randomFromArray([
+          "OMR is a booming location known for tech hubs and excellent connectivity. We have properties available in this area.",
+          "Yes, we offer residential and commercial plots along OMR. Ideal for professionals working in IT parks."
+        ]);
       } else {
         return "I'm here to assist with anything related to real estate—plots, villas, pricing, loans, and more!";
       }
     }
+    
+    // Utility function
+    function randomFromArray(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+    
 
     // text-to-speech
-    function speakText(text) {
-      const synth = window.speechSynthesis;
-      const voices = synth.getVoices();
+function speakText(text) {
+  const synth = window.speechSynthesis;
+  const voices = synth.getVoices();
 
-      const preferred = [
-        "Google UK English Female",
-        "Microsoft Heera",
-        "Heera",
-        "Google हिन्दी",
-      ];
-      let selected =
-        voices.find((v) => preferred.includes(v.name)) ||
-        voices.find(
-          (v) =>
-            v.lang.includes("en-IN") &&
-            v.name.toLowerCase().includes("female")
-        ) ||
-        voices.find((v) => v.lang.includes("en-IN")) ||
-        voices[0];
+  // Filter only female voices
+  const femaleVoices = voices.filter(v => 
+    v.name.toLowerCase().includes('female') || 
+    v.name.toLowerCase().includes('woman') ||
+    v.name.toLowerCase().includes('female') ||
+    v.gender === 'female'
+  );
 
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.voice = selected;
-      utter.rate = 1;
-      utter.pitch = 1.1;
-      synth.speak(utter);
-    }
+  // Preferred female voices (order matters)
+  const preferred = [
+    "Google UK English Female",
+    "Microsoft Heera",
+    "Heera",
+    "Google हिन्दी Female"
+  ];
 
-    // ensure voices load
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
+  // Select first preferred female voice, or first available female voice
+  let selected =
+    femaleVoices.find(v => preferred.includes(v.name)) ||
+    femaleVoices.find(v => v.lang.includes("en-IN")) ||
+    femaleVoices[0];
+
+  // Fallback to first available voice if no female voices found
+  if (!selected && voices.length > 0) {
+    selected = voices[0];
+    console.warn("No female voices available, falling back to default");
+  }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  if (selected) utter.voice = selected;
+  utter.rate = 1;
+  utter.pitch = 1.1;
+  synth.speak(utter);
+}
+
+// ensure voices load
+window.speechSynthesis.onvoiceschanged = () => {
+  window.speechSynthesis.getVoices();
+};
 
     // voice input
     window.startListening = function () {
